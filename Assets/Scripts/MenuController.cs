@@ -33,7 +33,8 @@ public class MenuController : MonoBehaviour
         });
 
         btnLoadGame.onClick.AddListener(()=>{
-            
+            Gamemanager.instance.LoadGameMenu.SetActive(true);
+            gameObject.SetActive(false);
         });
     }
 

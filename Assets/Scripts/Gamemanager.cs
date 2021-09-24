@@ -11,6 +11,8 @@ public class Gamemanager : MonoBehaviour
     GameObject mainMenu;
     [SerializeField]
     GameObject newGameMenu;
+    [SerializeField]
+    GameObject loadGameMenu;
 
     void Awake()
     {
@@ -28,4 +30,5 @@ public class Gamemanager : MonoBehaviour
     public GameData CurrentGameData {get => gameData; set => gameData = value;}
     public GameObject MainMenu{get => mainMenu; set => mainMenu = value;}
     public GameObject NewGameMenu{get => newGameMenu; set => newGameMenu = value;}
+    public GameObject LoadGameMenu{get => loadGameMenu; set => loadGameMenu = value;}
 }
