@@ -418,7 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1cb4de41fe04d94ebe750450d4f2263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 5
+  jumpForce: 7
   moveSpeed: 3
   groundFilter:
     useTriggers: 0

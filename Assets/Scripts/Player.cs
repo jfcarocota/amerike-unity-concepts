@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameLibs.MemorySystem;
+using GameLibs.GameControlInputs;
 
 public class Player : MonoBehaviour
 {
-    GameControls gameControls;
     Rigidbody2D rb2D;
     SpriteRenderer spr;
     Animator anim;
@@ -20,18 +20,18 @@ public class Player : MonoBehaviour
     {
         rb2D = GetComponent<Rigidbody2D>();
         spr = GetComponent<SpriteRenderer>();
-        gameControls = new GameControls();
         anim = GetComponent<Animator>();
+        GameControlInputs.CreateGameControls();
     }
 
     void OnEnable()
     {
-        gameControls.Enable();
+        GameControlInputs.EnableGameControls();
     }
 
     void OnDisable()
     {
-        gameControls.Disable();
+        GameControlInputs.DisableGameControls();
     }
 
     void CheckData()
@@ -48,49 +48,32 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        /*MemorySystem.NewGame("game1");
-        Gamemanager.instance.CurrentGameData = MemorySystem.LoadGame("game1");
-        CheckData();
-        Gamemanager.instance.CurrentGameData.PlayerLevel = 100;
-        MemorySystem.SaveGame(Gamemanager.instance.CurrentGameData);
-        CheckData();*/
-        gameControls.Gameplay.Jump.performed += _=> Jump();
+        GameControlInputs.JumpEvent.performed += _=> Jump();
     }
 
     void FixedUpdate()
     {
-        rb2D.position += Axis * moveSpeed * Time.deltaTime;
-        //Debug.Log("Fixed Update");
+        GameControlInputs.MovePlayer(ref rb2D, ref moveSpeed);
     }
 
     void Update()
     {
-        spr.flipX = FlipSpriteX;
-        //transform.Translate(Axis * 5f * Time.deltaTime);
-        //Hello();
-        //Debug.Log("Update");
+        spr.flipX = GameControlInputs.FlipSpriteX(ref spr);
     }
 
     void LateUpdate()
     {
-        anim.SetFloat("axisX", Mathf.Abs(Axis.x));
-        //Debug.Log("Late Update");
+        anim.SetFloat("axisX", Mathf.Abs(GameControlInputs.Axis.x));
+        anim.SetBool("grounding", GameControlInputs.IsGrounding(ref rb2D, ref groundFilter));
+        anim.SetFloat("velY", rb2D.velocity.y);
     }
 
     void Jump()
     {
-        if(IsGrounding)
+        if(GameControlInputs.IsGrounding(ref rb2D, ref groundFilter))
         {
-            rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            GameControlInputs.Jump(ref rb2D, ref jumpForce);
+            anim.SetTrigger("jump");
         }
     }
-
-    //void Hello() => Debug.Log("Hello");
-
-    //Vector2 Axis => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-    Vector2 Axis => gameControls.Gameplay.Axis.ReadValue<Vector2>();
-
-    bool FlipSpriteX => Axis.x > 0 ? false : Axis.x < 0 ? true : spr.flipX;
-
-    bool IsGrounding => rb2D.IsTouching(groundFilter);
 }
